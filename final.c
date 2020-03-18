@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <windows.h>
-#include "node.h"
+
 
 char map[100][100];  //status of every point
 int ppos[100][100]; //cells map & position
@@ -10,6 +10,90 @@ char visual[300][300];
 int pos_energy[100][100]; //energy of every position
 int n;   //length of square side
 int cn,cn1,cn2;
+
+struct node
+{
+    char name[20];
+    int cenergy;
+    int x;
+    int y;
+    struct node *next;
+};
+struct node * newnode( char name[20], int cenergy, int x, int y)
+{
+    struct node * new_node = (struct node *) malloc(sizeof(struct node));
+    strcpy(new_node->name,name);
+    new_node->cenergy = cenergy;
+    new_node->x=x;
+    new_node->y=y;
+    new_node->next = NULL;
+    return new_node;
+}
+void addfront(struct node ** head, char name[20], int cenergy, int x, int y)
+{
+    struct node * new_node = newnode(name,cenergy,x,y);
+    new_node->next = *head;
+    *head = new_node;
+}
+void pushback(struct node ** head, char name[20], int cenergy, int x, int y)
+{
+    if(*head == NULL)
+    {
+        *head = newnode(name,cenergy,x,y);
+        return;
+    }
+    struct node * curr = *head;
+    while(curr->next != NULL)
+    {
+        curr = curr->next;
+    }
+    curr->next = newnode(name,cenergy,x,y);
+}
+void deletenode(struct node ** head,char name[20])
+{
+    if(*head==NULL)
+    {
+        return;
+    }
+    if (strcmp((*head)->name,name)==0)
+    {
+        struct node * temp= *head;
+        *head=(*head)->next;
+        free(temp);
+        return;
+    }
+    struct node * current=*head;
+    struct node * last = NULL;
+    while(current!=NULL)
+    {
+        if (strcmp(current->name,name)==0)
+        {
+            last->next = current->next;
+            free(current);
+            return;
+        }
+        last = current;
+        current = current->next;
+    }
+}
+void addstruct(struct node **head,struct node *a)
+{
+    if(*head==NULL)
+    {
+        *head=a;
+        a->next=NULL;
+    }
+    else{
+    struct node *curr=*head;
+    while(curr->next != NULL)
+    {
+        curr = curr->next;
+    }
+    curr->next = a;
+    a->next=NULL;
+    }
+}
+
 void textcolor (int color)
 {
     static int __BACKGROUND;
